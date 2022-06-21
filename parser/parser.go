@@ -145,7 +145,7 @@ func validateGridSize(gridSlice []string) (int, int, error) {
 
 	height, err := strconv.Atoi(string(gridStringFormatted[1]))
 	if err != nil {
-		return 0, 0, fmt.Errorf("failed to read height width: %v", err)
+		return 0, 0, fmt.Errorf("failed to read grid height: %v", err)
 	}
 
 	if width == 0 || height == 0 {

@@ -1,6 +1,8 @@
 package direction
 
-import "errors"
+import (
+	"fmt"
+)
 
 type Direction struct {
 	Value string
@@ -8,7 +10,7 @@ type Direction struct {
 	Left  func() *Direction
 }
 
-// New creates a initialises a new Direction
+// New initialises a new Direction and returns a pointer
 func New(value string) (*Direction, error) {
 	out := &Direction{}
 
@@ -22,10 +24,11 @@ func New(value string) (*Direction, error) {
 	case VSouth.String():
 		return out.South()(), nil
 	default:
-		return nil, errors.New("invalid direction supplied to New")
+		return nil, fmt.Errorf("invalid direction supplied to New: %s", value)
 	}
 }
 
+// These methods are indirectly tested within the `parse` package.
 func (d *Direction) North() func() *Direction {
 	return func() *Direction {
 		return &Direction{
@@ -66,6 +69,8 @@ func (d *Direction) East() func() *Direction {
 	}
 }
 
+// IsDirection validates if a direction is valid,
+// returning true if valid.
 func (d *Direction) IsDirection(vd VehicleDirection) bool {
 	return d.Value == vd.String()
 }

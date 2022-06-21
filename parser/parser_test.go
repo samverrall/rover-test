@@ -21,16 +21,16 @@ func Test_splitLines(t *testing.T) {
 		{
 			name: "Successfully splits lines",
 			input: `
-5 5
+			5 5
 
-1 2 N
+			1 2 N
 
-LMLMLMLMM
+			LMLMLMLMM
 
-3 3 E
+			3 3 E
 
-MMRMMRMRRM
-`,
+			MMRMMRMRRM
+			`,
 			want: [][]string{
 				{"5 5"},
 				{"1 2 N"},
@@ -82,7 +82,41 @@ func TestParse(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "No vehicles supplied returns an err",
+			name: "Zero size grid supplied returs an error",
+			args: args{
+				in: `
+				0 0
+			
+				1 2 N
+			
+				LMLMLMLMM
+			
+				3 3 E
+			
+				MMRMMRMRRM
+				`,
+			},
+			wantErr: true,
+		},
+		{
+			name: "Incorrect grid line too many values error",
+			args: args{
+				in: `
+				2 2 2
+			
+				1 2 N
+			
+				LMLMLMLMM
+			
+				3 3 E
+			
+				MMRMMRMRRM
+				`,
+			},
+			wantErr: true,
+		},
+		{
+			name: "No vehicles supplied returns an error",
 			args: args{
 				in: `
 				5 5
@@ -92,14 +126,63 @@ func TestParse(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Zero size grid supplied",
+			name: "Invalid vehicle starting position direction supplied, fail to create rover error",
 			args: args{
 				in: `
-				0 0
+				5 5
 			
-				1 2 N
+				1 2 Z
 			
 				LMLMLMLMM
+			
+				3 3 E
+			
+				MMRMMRMRRM
+				`,
+			},
+			wantErr: true,
+		},
+		{
+			name: "Invalid vehicle starting position coordinate supplied returns an error",
+			args: args{
+				in: `
+				5 5
+			
+				1 L N
+			
+				LMLMLMLMM
+			
+				3 3 E
+			
+				MMRMMRMRRM
+				`,
+			},
+			wantErr: true,
+		},
+		{
+			name: "Invalid vehicle starting position missing starting direction",
+			args: args{
+				in: `
+				5 5
+			
+				1 L
+			
+				LMLMLMLMM
+			
+				3 3 E
+			
+				MMRMMRMRRM
+				`,
+			},
+			wantErr: true,
+		},
+		{
+			name: "Missing vehicle commands returns an error",
+			args: args{
+				in: `
+				5 5
+			
+				1 3 N
 			
 				3 3 E
 			

@@ -162,25 +162,99 @@ func TestRover_Navigate(t *testing.T) {
 }
 
 func TestRover_Position(t *testing.T) {
-	type fields struct {
-		Direction  *direction.Direction
-		Coordinate coordinates.Coorninator
+	type args struct {
+		xStart    int
+		yStart    int
+		direction string
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   string
+		name string
+		args args
+		want string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Returns rover position string",
+			args: args{
+				xStart:    4,
+				yStart:    2,
+				direction: "S",
+			},
+			want: "4 2 S",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			direction, err := direction.New(tt.args.direction)
+			require.NoError(t, err, "failed to create direction: %v", err)
+
 			r := &Rover{
-				Direction:  tt.fields.Direction,
-				Coordinate: tt.fields.Coordinate,
+				Direction:  direction,
+				Coordinate: coordinates.New(tt.args.xStart, tt.args.yStart),
 			}
 			if got := r.Position(); got != tt.want {
 				t.Errorf("Rover.Position() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNew(t *testing.T) {
+	const (
+		invalidDirectionString = "B"
+	)
+
+	type args struct {
+		in RoverInArgs
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *Rover
+		wantErr bool
+	}{
+		{
+			name: "New successfully returns rover",
+			args: args{
+				in: RoverInArgs{
+					Position: coordinates.Coordinate{
+						X: 5,
+						Y: 5,
+					},
+					DirectionString: "N",
+				},
+			},
+			want: &Rover{
+				Direction:  &direction.Direction{Value: direction.VNorth.String()},
+				Coordinate: coordinates.New(5, 5),
+			},
+			wantErr: false,
+		},
+		{
+			name: "New returns an error, invalid direction string",
+			args: args{
+				in: RoverInArgs{
+					Position: coordinates.Coordinate{
+						X: 5,
+						Y: 5,
+					},
+					DirectionString: invalidDirectionString,
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := New(tt.args.in)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if err == nil {
+				require.EqualValues(t, got.Coordinate.GetX(), tt.want.Coordinate.GetX())
+				require.EqualValues(t, got.Coordinate.GetY(), tt.want.Coordinate.GetY())
+				require.EqualValues(t, got.Direction.Value, tt.want.Direction.Value)
 			}
 		})
 	}

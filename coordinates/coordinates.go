@@ -12,11 +12,14 @@ type Coorninator interface {
 	GetY() int
 }
 
+// Coordinate implments the Coordinator interface and holds to the X and Y coordinates
+// of a vehicle.
 type Coordinate struct {
 	X int
 	Y int
 }
 
+// New initialises a new Coordinate for a vehicle.
 func New(x int, y int) *Coordinate {
 	return &Coordinate{
 		X: x,
@@ -24,7 +27,7 @@ func New(x int, y int) *Coordinate {
 	}
 }
 
-// Next moves a vehicle to by the supplied direction and returns the new vehicle coordinates.
+// Next moves a vehicle by the supplied direction and returns the new vehicle coordinates.
 func (c *Coordinate) Next(curDirection *direction.Direction, grid *plateau.Plateau) *Coordinate {
 	switch {
 	case curDirection.IsDirection(direction.VNorth) && c.Y < grid.GetHeight():

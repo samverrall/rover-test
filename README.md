@@ -4,16 +4,19 @@
 
 `main.go` contains a hardcoded string input which directly calls the `parser.Parse()` function, returning the vehicles + grid size. 
 
-This could be future extended using the Go standard lib `flag` package to accept instructions into the program.
+This progam could be extended using the Go standard lib `flag` package to accept instructions into the program. As we have a `vehicle` interface the program could also be extended to support more vehicle types. Currently only the `vehicle/rover` package satisfies the the vehicle interface.
 
 To see the result of the hardcoded input please run:
 
-`go run main.go`.
-
+```
+$ go run main.go
+```
 
 ## Running tests
 
-`$ ./testandlint.sh`
+```
+$ ./testandlint.sh
+```
 
 Running `testandlint.sh` requires the `golangci-lint` Go linter installed on your machine.
 
@@ -24,11 +27,18 @@ Install `golangci-lint`
 
 
 ## Packages
--   `cooordinates` Handles coordinate movements on vehicles, and supplies an interface + mocks.
-- `direction` Handles rotating the vehicle.
-- `parser` Handles string input for vehicle instructions and plateau size. It also directly calls the vehicle nagivation function to execute the instructions.
-- `vehicle` supplies an interface with the required implementation for a vehicle. `vehicle/rover` satisfies this interface.
-- `plateau` initialises a new mars rover grid with the supplied grid width and grid height from the string instructions.
+
+- `cooordinates` Handles coordinate movements on vehicles, and supplies an interface + mock implementation.
+- `direction` Handles rotating the vehicle by tracking its current direction and deciding its Left() and Right() movements,
+for example if the current direction is North we know that the Right() function and Left() function calls would return
+West and East. Likewise if it was South it's Left() and Right() would return East and West.
+- `parser` Handles string input for vehicle instructions and plateau size and vaidates the input. Incorrect inputs will return an error, valid input will be executed using the vehicle nagivation function.
+- `vehicle` defines an interface with the required implementation for a vehicle. `vehicle/rover` satisfies this interface.
+- `plateau` Initialises a new mars rover grid with the supplied grid width and grid height from the string instructions.
+
+## Improvements / Refactoring that I'd Implement
+
+- Review the data structure of the parsed instructions.
 
 ## Example input
 

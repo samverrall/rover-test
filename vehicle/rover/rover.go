@@ -43,11 +43,14 @@ func (r *Rover) Position() string {
 	return fmt.Sprintf("%d %d %s", r.Coordinate.GetX(), r.Coordinate.GetY(), r.Direction.Value)
 }
 
+// Navigate executes the instructions to move a vehicle.
+// Invalid instructions will cause an error to be returned.
 func (r *Rover) Navigate(commands string, grid *plateau.Plateau) error {
 	if strings.TrimSpace(commands) == "" {
 		return errors.New("no commands supplied, failed to naviate")
 	}
 
+	// Iterate through the commands
 	for _, command := range commands {
 		switch command {
 		case Right:
