@@ -4,7 +4,7 @@
 
 `main.go` contains a hardcoded string input which directly calls the `parser.Parse()` function, returning the vehicles + grid size. 
 
-This progam could be extended using the Go standard lib `flag` package to accept instructions into the program. As we have a `vehicle` interface the program could also be extended to support more vehicle types. Currently only the `vehicle/rover` package satisfies the the vehicle interface.
+This progam could be extended using the Go standard lib `flag` package to accept instructions into the program. As we have a `vehicle` interface the program could also be extended to support more vehicle types. Currently only the `vehicle/rover` package satisfies the vehicle interface.
 
 To see the result of the hardcoded input please run:
 
@@ -32,7 +32,7 @@ Install `golangci-lint`
 - `direction` Handles rotating the vehicle by tracking its current direction and deciding its Left() and Right() movements,
 for example if the current direction is North we know that the Right() function and Left() function calls would return
 West and East. Likewise if it was South it's Left() and Right() would return East and West.
-- `parser` Handles string input for vehicle instructions and plateau size and vaidates the input. Incorrect inputs will return an error, valid input will be executed using the vehicle nagivation function.
+- `parser` Handles string input for vehicle instructions, plateau size and vaidates the input. Incorrect inputs will return an error, valid input will be executed using the vehicle nagivation function.
 - `vehicle` defines an interface with the required implementation for a vehicle. `vehicle/rover` satisfies this interface.
 - `plateau` Initialises a new mars rover grid with the supplied grid width and grid height from the string instructions.
 
