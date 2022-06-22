@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>coordinates: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/samverrall/rover-test/coordinates/coordinates.go (66.7%)</option>
+				
+				<option value="file1">github.com/samverrall/rover-test/main.go (71.4%)</option>
+				
+				<option value="file2">github.com/samverrall/rover-test/parser/parser.go (94.4%)</option>
+				
+				<option value="file3">github.com/samverrall/rover-test/vehicle/rover/rover.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package coordinates
+
+import (
+        "github.com/samverrall/rover-test/direction"
+        "github.com/samverrall/rover-test/plateau"
+)
+
+type Coorninator interface {
+        Next(curDirection *direction.Direction, grid *plateau.Plateau) *Coordinate
+
+        GetX() int
+        GetY() int
+}
+
+// Coordinate implments the Coordinator interface and holds to the X and Y coordinates
+// of a vehicle.
+type Coordinate struct {
+        X int
+        Y int
+}
+
+// New initialises a new Coordinate for a vehicle.
+func New(x int, y int) *Coordinate <span class="cov0" title="0">{
+        return &amp;Coordinate{
+                X: x,
+                Y: y,
+        }
+}</span>
+
+// Next moves a vehicle by the supplied direction and returns the new vehicle coordinates.
+func (c *Coordinate) Next(curDirection *direction.Direction, grid *plateau.Plateau) *Coordinate <span class="cov8" title="1">{
+        switch </span>{
+        case curDirection.IsDirection(direction.VNorth) &amp;&amp; c.Y &lt; grid.GetHeight():<span class="cov8" title="1">
+                return &amp;Coordinate{
+                        X: c.X,
+                        Y: c.Y + 1,
+                }</span>
+        case curDirection.IsDirection(direction.VSouth) &amp;&amp; c.Y &gt; 0:<span class="cov8" title="1">
+                return &amp;Coordinate{
+                        X: c.X,
+                        Y: c.Y - 1,
+                }</span>
+        case curDirection.IsDirection(direction.VWest) &amp;&amp; c.X &gt; 0:<span class="cov8" title="1">
+                return &amp;Coordinate{
+                        X: c.X - 1,
+                        Y: c.Y,
+                }</span>
+        case curDirection.IsDirection(direction.VEast) &amp;&amp; c.X &lt; grid.GetWidth():<span class="cov8" title="1">
+                return &amp;Coordinate{
+                        X: c.X + 1,
+                        Y: c.Y,
+                }</span>
+        default:<span class="cov8" title="1">
+                return c</span>
+        }
+}
+
+func (c *Coordinate) GetX() int <span class="cov0" title="0">{
+        return c.X
+}</span>
+
+func (c *Coordinate) GetY() int <span class="cov0" title="0">{
+        return c.Y
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "fmt"
+
+        "github.com/samverrall/rover-test/parser"
+)
+
+func main() <span class="cov8" title="1">{
+        input := `
+        5 5
+
+        1 2 N
+
+        LMLMLMLMM
+
+        3 3 E
+
+        MMRMMRMRRM
+        `
+
+        data, err := parser.Parse(input)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Printf("Failed to parse input: %v\n", err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">for idx, vehicle := range data.Vicheles </span><span class="cov8" title="1">{
+                fmt.Printf("Vehicle %d position output: %v\n", idx, vehicle.Position())
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package parser
+
+import (
+        "bufio"
+        "errors"
+        "fmt"
+        "strconv"
+        "strings"
+
+        "github.com/samverrall/rover-test/coordinates"
+        "github.com/samverrall/rover-test/plateau"
+        "github.com/samverrall/rover-test/vehicle"
+        "github.com/samverrall/rover-test/vehicle/rover"
+)
+
+const (
+        expectedStartingPositions  = 3
+        expectedVehicleStringParts = 2
+
+        gridFieldsCount = 2
+)
+
+type startingPositions struct {
+        X         int
+        Y         int
+        Direction string
+}
+
+type ParserOut struct {
+        Vicheles []vehicle.Vehicle
+        Grid     *plateau.Plateau
+}
+
+func Parse(in string) (*ParserOut, error) <span class="cov8" title="1">{
+        if strings.TrimSpace(in) == "" </span><span class="cov8" title="1">{
+                return nil, errors.New("no input supplied")
+        }</span>
+
+        <span class="cov8" title="1">parserOut := ParserOut{}
+        inputSlices := splitLines(in)
+
+        // Parse the first line which we know is the plateau size.
+        width, height, err := validateGridSize(inputSlices[0])
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">parserOut.Grid = plateau.New(width, height)
+
+        // Parse all the lines after the plateau size.
+        getVehiclesFromLines, err := getVehiclesFromLines(inputSlices[1:], parserOut.Grid)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to get vehicles from lines, %v", err)
+        }</span>
+
+        <span class="cov8" title="1">parserOut.Vicheles = getVehiclesFromLines
+
+        return &amp;parserOut, nil</span>
+}
+
+func getVehiclesFromLines(vehicleStrings [][]string, grid *plateau.Plateau) ([]vehicle.Vehicle, error) <span class="cov8" title="1">{
+        out := make([]vehicle.Vehicle, 0)
+
+        vehicleStringsCount := len(vehicleStrings)
+        if vehicleStringsCount == 0 </span><span class="cov8" title="1">{
+                return out, fmt.Errorf("no vehicle strings supplied")
+        }</span>
+
+        <span class="cov8" title="1">for i := 0; i &lt; vehicleStringsCount; i += 2 </span><span class="cov8" title="1">{
+                vehicleParts := vehicleStrings[i:]
+                if len(vehicleParts) &lt; expectedVehicleStringParts </span><span class="cov0" title="0">{
+                        return out, fmt.Errorf("incorrectly found vehicle parts, expected two slice indexes")
+                }</span>
+
+                <span class="cov8" title="1">startingPositions, err := parseStartingPosition(vehicleParts[0])
+                if err != nil </span><span class="cov8" title="1">{
+                        return out, err
+                }</span>
+
+                <span class="cov8" title="1">rover, err := rover.New(rover.RoverInArgs{
+                        Position: coordinates.Coordinate{
+                                X: startingPositions.X,
+                                Y: startingPositions.Y,
+                        },
+                        DirectionString: startingPositions.Direction,
+                })
+                if err != nil </span><span class="cov8" title="1">{
+                        return out, fmt.Errorf("failed to create vehicle, %v", err)
+                }</span>
+
+                <span class="cov8" title="1">vichelesCommands := vehicleParts[1]
+                vichelesCommandsString := vichelesCommands[0]
+                if err := rover.Navigate(vichelesCommandsString, grid); err != nil </span><span class="cov8" title="1">{
+                        return out, err
+                }</span>
+
+                <span class="cov8" title="1">out = append(out, rover)</span>
+        }
+
+        <span class="cov8" title="1">return out, nil</span>
+}
+
+func parseStartingPosition(positionSlice []string) (startingPositions, error) <span class="cov8" title="1">{
+        if len(positionSlice) == 0 </span><span class="cov0" title="0">{
+                return startingPositions{}, fmt.Errorf("empty vehicle position supplied")
+        }</span>
+
+        <span class="cov8" title="1">positionString := positionSlice[0]
+        positionStringFormatted := strings.ReplaceAll(positionString, " ", "")
+
+        if len(positionStringFormatted) != expectedStartingPositions </span><span class="cov8" title="1">{
+                return startingPositions{}, fmt.Errorf("invalid vehicle starting position supplied: %s", positionStringFormatted)
+        }</span>
+
+        <span class="cov8" title="1">out := startingPositions{}
+
+        startingX, err := strconv.Atoi(string(positionStringFormatted[0]))
+        if err != nil </span><span class="cov0" title="0">{
+                return out, fmt.Errorf("failed to parse starting position X: %v", err)
+        }</span>
+
+        <span class="cov8" title="1">startingY, err := strconv.Atoi(string(positionStringFormatted[1]))
+        if err != nil </span><span class="cov8" title="1">{
+                return out, fmt.Errorf("failed to parse starting position X: %v", err)
+        }</span>
+
+        <span class="cov8" title="1">return startingPositions{
+                X:         startingX,
+                Y:         startingY,
+                Direction: string(positionStringFormatted[2]),
+        }, nil</span>
+}
+
+func validateGridSize(gridSlice []string) (int, int, error) <span class="cov8" title="1">{
+        gridStringFormatted := strings.ReplaceAll(gridSlice[0], " ", "")
+
+        if len(gridStringFormatted) != gridFieldsCount </span><span class="cov8" title="1">{
+                return 0, 0, fmt.Errorf("unexpected grid string supplied: %s", gridStringFormatted)
+        }</span>
+
+        // Convert string numbers to integers.
+        <span class="cov8" title="1">width, err := strconv.Atoi(string(gridStringFormatted[0]))
+        if err != nil </span><span class="cov8" title="1">{
+                return 0, 0, fmt.Errorf("failed to read grid width: %v", err)
+        }</span>
+
+        <span class="cov8" title="1">height, err := strconv.Atoi(string(gridStringFormatted[1]))
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, 0, fmt.Errorf("failed to read grid height: %v", err)
+        }</span>
+
+        <span class="cov8" title="1">if width == 0 || height == 0 </span><span class="cov8" title="1">{
+                return 0, 0, errors.New("empty grid supplied")
+        }</span>
+
+        <span class="cov8" title="1">return width, height, nil</span>
+}
+
+// splitLines takes a string of data and returns each input line as a index in a slice.
+func splitLines(s string) [][]string <span class="cov8" title="1">{
+        var inputLines []string
+        sc := bufio.NewScanner(strings.NewReader(s))
+        for sc.Scan() </span><span class="cov8" title="1">{
+                inputLines = append(inputLines, strings.TrimSpace(sc.Text()))
+        }</span>
+
+        <span class="cov8" title="1">formattedLines := make([][]string, 0)
+        for _, lineString := range inputLines </span><span class="cov8" title="1">{
+                lineValues := make([]string, 0)
+                if strings.TrimSpace(lineString) == "" </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">lineValues = append(lineValues, lineString)
+                formattedLines = append(formattedLines, lineValues)</span>
+        }
+
+        <span class="cov8" title="1">return formattedLines</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package rover
+
+import (
+        "errors"
+        "fmt"
+        "strings"
+
+        "github.com/samverrall/rover-test/coordinates"
+        "github.com/samverrall/rover-test/direction"
+        "github.com/samverrall/rover-test/plateau"
+)
+
+const (
+        Right = 'R'
+        Left  = 'L'
+        Move  = 'M'
+)
+
+type Rover struct {
+        Direction  *direction.Direction
+        Coordinate coordinates.Coorninator
+}
+
+type RoverInArgs struct {
+        Position        coordinates.Coordinate
+        DirectionString string
+}
+
+func New(in RoverInArgs) (*Rover, error) <span class="cov8" title="1">{
+        direction, err := direction.New(in.DirectionString)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return &amp;Rover{
+                // I purposely initialise direction struct here myself rather than use a `New()` initiator as there is no initiation values needed.
+                Direction:  direction,
+                Coordinate: coordinates.New(in.Position.X, in.Position.Y),
+        }, nil</span>
+}
+
+func (r *Rover) Position() string <span class="cov8" title="1">{
+        return fmt.Sprintf("%d %d %s", r.Coordinate.GetX(), r.Coordinate.GetY(), r.Direction.Value)
+}</span>
+
+// Navigate executes the instructions to move a vehicle.
+// Invalid instructions will cause an error to be returned.
+func (r *Rover) Navigate(commands string, grid *plateau.Plateau) error <span class="cov8" title="1">{
+        if strings.TrimSpace(commands) == "" </span><span class="cov8" title="1">{
+                return errors.New("no commands supplied, failed to naviate")
+        }</span>
+
+        // Iterate through the commands
+        <span class="cov8" title="1">for _, command := range commands </span><span class="cov8" title="1">{
+                switch command </span>{
+                case Right:<span class="cov8" title="1">
+                        r.Direction = r.Direction.Right()</span>
+                case Left:<span class="cov8" title="1">
+                        r.Direction = r.Direction.Left()</span>
+                case Move:<span class="cov8" title="1">
+                        r.Coordinate = r.Coordinate.Next(r.Direction, grid)</span>
+                default:<span class="cov8" title="1">
+                        return fmt.Errorf("invalid command supplied, %v", command)</span>
+                }
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
